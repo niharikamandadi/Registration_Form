@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Registered Users</title>
+
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px #0004;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .top {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        #search {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        a {
+            background: #36c1cc;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            background: #269fa9
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #36c1cc;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f5f5
+        }
+
+        button {
+            border: 0;
+            padding: 7px 12px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:first-child {
+            background: #27ae60
+        }
+
+        button:last-child {
+            background: #e74c3c
+        }
+
+        @media(max-width:800px) {
+            body {
+                padding: 15px
+            }
+
+            .container {
+                overflow: auto
+            }
+
+            table {
+                min-width: 900px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Registered Users</h2>
+
+        <div class="top">
+            <input id="search" placeholder="Search..." oninput="show()">
+            <a href="index.html">Register User</a>
+        </div>
+
+        <div id="out"></div>
+
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.users || "[]"),
+            $ = id => document.getElementById(id);
+
+        function show() {
+            let s = search.value.toLowerCase(),
+                a = users.filter(u => Object.values(u).some(x =>
+                    String(x).toLowerCase().includes(s)));
+
+            out.innerHTML = `<table>
+                <tr><th>Name</th><th>Email</th><th>Username</th>
+                    <th>Gender</th><th>DOB</th><th>Phone</th>
+                    <th>Pincode</th><th>Address</th><th>Action</th>
+                </tr>`+ a.map((u, i) => `<tr>
+                    <td>${u.fn} ${u.ln}</td>
+                    <td>${u.em}</td>
+                    <td>${u.un}</td>
+                    <td>${u.g}</td>
+                    <td>${u.dob}</td>
+                    <td>${u.ph}</td>
+                    <td>${u.pin}</td>
+                    <td>${u.ad}</td>
+                    <td>
+                        <button onclick="edit(${i})">Edit</button>
+                        <button onclick="del(${i})">Delete</button>
+                    </td>
+                </tr>`).join("") + `</table>`;
+        }
+
+        function edit(i) {
+            let u = users[i];
+            Object.keys(u).forEach(k => {
+                let x = prompt(k, u[k]);
+                if (x !== null) u[k] = x;
+            });
+            localStorage.users = JSON.stringify(users);
+            show();
+        }
+
+        function del(i) {
+            if (confirm("Delete user?")) {
+                users.splice(i, 1);
+                localStorage.users = JSON.stringify(users);
+                show();
+            }
+        }
+
+        show();
+    </script>
+
+</body>
+
+</html>

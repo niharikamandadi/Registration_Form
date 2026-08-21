@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Registration</title>
+
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #36d1dc, #5b86e5);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px #0004;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            margin: 6px 0;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #36bfc9;
+            box-shadow: 0 0 5px #36bfc955;
+        }
+
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        .gender {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .gender input {
+            width: auto;
+            margin-left: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: 0;
+            border-radius: 7px;
+            background: #36c1cc;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #269fa9;
+        }
+
+        #msg {
+            text-align: center;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #3685d8;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        @media(max-width:650px) {
+            .container {
+                width: 90%
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>User Registration</h2>
+
+        <form id="f">
+
+            <div class="row">
+                <input id="fn" placeholder="First Name" required>
+                <input id="ln" placeholder="Last Name" disabled required>
+            </div>
+
+            <div class="row">
+                <input id="em" type="email" placeholder="Email" required>
+                <input id="un" placeholder="Username" required>
+            </div>
+
+            <div class="gender">
+                <b>Gender:</b>
+                <label><input type="radio" name="g" value="Male" required> Male</label>
+                <label><input type="radio" name="g" value="Female"> Female</label>
+                <label><input type="radio" name="g" value="Others"> Others</label>
+            </div>
+
+            <div class="row">
+                <input id="dob" type="date" required>
+                <input id="pw" type="password" placeholder="Password" required>
+                <input id="cpw" type="password" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="row">
+                <input id="ph" placeholder="Phone (10 digits)" maxlength="10" required>
+                <input id="pin" placeholder="Pincode (6 digits)" maxlength="6" required>
+            </div>
+
+            <textarea id="ad" placeholder="Address" required></textarea>
+
+            <button>Register</button>
+
+        </form>
+
+        <p id="msg"></p>
+
+        <a href="users.html">View Users</a>
+
+    </div>
+
+    <script>
+        let $ = id => document.getElementById(id),
+            users = JSON.parse(localStorage.users || "[]");
+
+        $("fn").oninput = () => $("ln").disabled = !$("fn").value.trim();
+
+        f.onsubmit = e => {
+            e.preventDefault();
+
+            let u = {
+                fn: $("fn").value, ln: $("ln").value, em: $("em").value,
+                un: $("un").value, g: document.querySelector("[name=g]:checked").value,
+                dob: $("dob").value, pw: $("pw").value, ph: $("ph").value,
+                pin: $("pin").value, ad: $("ad").value
+            };
+
+            if (users.some(x => x.un.toLowerCase() == u.un.toLowerCase()))
+                return msg.innerText = "Username already exists";
+
+            if (!/^\d{10}$/.test(u.ph))
+                return msg.innerText = "Phone must be 10 digits";
+
+            if (!/^\d{6}$/.test(u.pin))
+                return msg.innerText = "Pincode must be 6 digits";
+
+            if (u.pw != cpw.value)
+                return msg.innerText = "Passwords do not match";
+
+            if (new Date(u.dob) > new Date())
+                return msg.innerText = "Invalid DOB";
+
+            users.push(u);
+            localStorage.users = JSON.stringify(users);
+
+            f.reset();
+            ln.disabled = true;
+            msg.innerText = "Registration Successful!";
+        };
+    </script>
+
+</body>
+
+</html>
